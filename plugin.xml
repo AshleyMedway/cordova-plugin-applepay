@@ -15,6 +15,7 @@
         </js-module>
 
         <framework src="PassKit.framework"/>
+        <framework src="src/ios/libs/Stripe.framework" custom="true" />
 
         <header-file src="src/ios/CDVApplePay.h"/>
         <source-file src="src/ios/CDVApplePay.m"/>
@@ -25,7 +26,6 @@
             </feature>
         </config-file>
 
-        <framework src="src/ios/libs/Stripe.framework" custom="true" />
     </platform>
 
 </plugin>
