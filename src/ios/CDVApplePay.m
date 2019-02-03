@@ -475,10 +475,6 @@
     if (completion) {
         self.paymentAuthorizationBlock = completion;
     }
-    NSDictionary* response = [self formatPaymentForApplication:payment];
-    
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:response];
-    [self.commandDelegate sendPluginResult:result callbackId:self.paymentCallbackId];
 }
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller

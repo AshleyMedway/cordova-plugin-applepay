@@ -7,15 +7,15 @@
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/samkelleher/cordova-plugin-applepay"
+    "url": "https://github.com/AshleyMedway/cordova-plugin-applepay"
   },
   "keywords": [],
   "author": {
-    "name": "Sam Kelleher",
-    "email": "sam@samkelleher.com",
-    "url": "https://samkelleher.com/"
+    "name": "Ashley Medway",
+    "email": "ashleymedway@me.com",
+    "url": "https://www.ashleymedway.com/"
   },
-  "contributors": ["Andrew Crites <acjcrites@gmail.com>"],
+  "contributors": ["Andrew Crites <acjcrites@gmail.com>", "Sam Kelleher <sam@samkelleher.com>"],
   "license": "Apache-2.0",
-  "homepage": "https://github.com/samkelleher/cordova-plugin-applepay"
+  "homepage": "https://github.com/AshleyMedway/cordova-plugin-applepay"
 }
