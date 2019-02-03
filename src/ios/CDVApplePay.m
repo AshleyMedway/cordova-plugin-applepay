@@ -1,5 +1,6 @@
 #import "CDVApplePay.h"
 @import AddressBook;
+@import Stripe;
 
 @implementation CDVApplePay
 
@@ -16,6 +17,18 @@
     // Set the capabilities that your merchant supports
     // Adyen for example, only supports the 3DS one.
     merchantCapabilities = PKMerchantCapability3DS;// PKMerchantCapabilityEMV;
+
+      // Stripe Publishable Key
+#ifndef NDEBUG
+    NSString * stripePublishableKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"StripeTestPublishableKey"];
+#else
+    NSString * stripePublishableKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"StripeLivePublishableKey"];
+#endif
+    NSLog(@"Stripe stripePublishableKey == %@", stripePublishableKey);
+    NSString * appleMerchantIdentifier = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"AppleMerchantIdentifier"];
+    NSLog(@"ApplePay appleMerchantIdentifier == %@", appleMerchantIdentifier);
+    [[STPPaymentConfiguration sharedConfiguration] setPublishableKey:stripePublishableKey];
+    [[STPPaymentConfiguration sharedConfiguration] setAppleMerchantIdentifier:appleMerchantIdentifier];
 }
 
 - (void)canMakePayments:(CDVInvokedUrlCommand*)command
@@ -224,7 +237,8 @@
     // reset any lingering callbacks, incase the previous payment failed.
     self.paymentAuthorizationBlock = nil;
     
-    PKPaymentRequest *request = [PKPaymentRequest new];
+    NSString * appleMerchantIdentifier = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"AppleMerchantIdentifier"];
+    PKPaymentRequest *request = [Stripe paymentRequestWithMerchantIdentifier:appleMerchantIdentifier];
     
     // Different version of iOS support different networks, (ie Discover card is iOS9+; not part of my project, so ignoring).
     request.supportedNetworks = supportedPaymentNetworks;
@@ -446,7 +460,18 @@
                                 completion:(void (^)(PKPaymentAuthorizationStatus status))completion
 {
     NSLog(@"CDVApplePay: didAuthorizePayment");
-    
+
+    [[STPAPIClient sharedClient] createTokenWithPayment:payment 
+                            completion:^(STPToken * _Nullable token, NSError * _Nullable error) {        
+        NSMutableDictionary* response = [self formatPaymentForApplication:payment];      
+        NSLog(@"Stripe token == %@", token.tokenId);        
+        if (token) {
+            [response setObject:token.tokenId forKey:@"stripeToken"];
+        }
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:response];
+        [self.commandDelegate sendPluginResult:result callbackId:self.paymentCallbackId];
+    }];
+
     if (completion) {
         self.paymentAuthorizationBlock = completion;
     }
